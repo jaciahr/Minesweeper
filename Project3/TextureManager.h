@@ -1,22 +1,3 @@
-#pragma once
-#include <SFML/Graphics.hpp>
-#include <unordered_map>
-#include <string>
-using std::unordered_map;
-using std::string;
-
-class TextureManager
-{
-    //One and only one of these in memory
-    //Don't make instances
-    static unordered_map<string, sf::Texture> textures;
-    static void LoadTexture(const char* textureName); //LoadTexture("space");
-public:
-    static sf::Texture& GetTexture(const char* textureName);
-    static void Clear(); //Call this once, at the end of main()
-        //No instances so no destructor kicks in
-};
-
 //#pragma once
 //#include <SFML/Graphics.hpp>
 //#include <unordered_map>
@@ -29,9 +10,28 @@ public:
 //    //One and only one of these in memory
 //    //Don't make instances
 //    static unordered_map<string, sf::Texture> textures;
-//    static void LoadTexture(string textureName); //LoadTexture("space");
+//    static void LoadTexture(const char* textureName); //LoadTexture("space");
 //public:
-//    static sf::Texture& GetTexture(string textureName);
+//    static sf::Texture& GetTexture(const char* textureName);
 //    static void Clear(); //Call this once, at the end of main()
 //        //No instances so no destructor kicks in
 //};
+
+#pragma once
+#include <SFML/Graphics.hpp>
+#include <unordered_map>
+#include <string>
+using std::unordered_map;
+using std::string;
+
+class TextureManager
+{
+    //One and only one of these in memory
+    //Don't make instances
+    static unordered_map<string, sf::Texture> textures;
+    static void LoadTexture(string textureName); //LoadTexture("space");
+public:
+    static sf::Texture& GetTexture(string textureName);
+    static void Clear(); //Call this once, at the end of main()
+        //No instances so no destructor kicks in
+};

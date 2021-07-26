@@ -9,6 +9,7 @@ public:
     unsigned int neighboringBombs;
     sf::Sprite unclickedTile;
     sf::Sprite clickedTile;
+    sf::Sprite flag;
     
     void SetPosition(float x, float y);
     void SetPosition(sf::Vector2f position);
