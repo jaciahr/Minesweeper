@@ -4,6 +4,7 @@ Tile::Tile() {
     unclickedTile.setTexture(TextureManager::GetTexture("tile_hidden"));
     clickedTile.setTexture(TextureManager::GetTexture("tile_revealed"));
     flag.setTexture(TextureManager::GetTexture("flag"));
+    bomb.setTexture(TextureManager::GetTexture("mine"));
     isClicked = false;
     isFlag = false;
     isBomb = false;
@@ -18,18 +19,21 @@ Tile::Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBom
     unclickedTile.setTexture(TextureManager::GetTexture("tile_hidden"));
     clickedTile.setTexture(TextureManager::GetTexture("tile_revealed"));
     flag.setTexture(TextureManager::GetTexture("flag"));
+    bomb.setTexture(TextureManager::GetTexture("mine"));
 }
 
 void Tile::SetPosition(float x, float y) {
     clickedTile.setPosition(x, y);
     unclickedTile.setPosition(x, y);
     flag.setPosition(x, y);
+    bomb.setPosition(x, y);
 }
 
 void Tile::SetPosition(sf::Vector2f position) {
     clickedTile.setPosition(position);
     unclickedTile.setPosition(position);
     flag.setPosition(position);
+    bomb.setPosition(position);
 }
 
 sf::FloatRect Tile::GetSpriteRect() {

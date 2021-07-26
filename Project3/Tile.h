@@ -10,6 +10,7 @@ public:
     sf::Sprite unclickedTile;
     sf::Sprite clickedTile;
     sf::Sprite flag;
+    sf::Sprite bomb;
     
     void SetPosition(float x, float y);
     void SetPosition(sf::Vector2f position);

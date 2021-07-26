@@ -24,6 +24,8 @@ int main()
         boardConfig >> blocksHeight;
         boardConfig >> mineCount;
 
+        boardConfig.close();
+
         unsigned int windowWidth = blocksWidth * 32;
         unsigned int windowHeight = (blocksHeight * 32) + 88;
 
@@ -36,9 +38,23 @@ int main()
             }
         }
 
-        //Tile someTile;
-        //someTile.SetPosition(300, 0);
-        
+        char testboardArray[16][25];
+        //vector<vector<int>> testboardVector;
+        ifstream testboard1Data;
+        testboard1Data.open("boards/testboard1.brd");
+        if (testboard1Data.is_open()) {
+            for (int i = 0; i < 16; i++) {
+                testboard1Data >> line;
+                for (int j = 0; j < 25; j++) {
+                    testboardArray[i][j] = line.at(j);
+                    if (testboardArray[i][j] == '1') {
+                        board.gameBoardVector.at(i).at(j).isBomb = true;
+                    }
+                }
+            }
+            testboard1Data.close();
+        }
+
         sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
         smiley.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
         sf::Sprite debugSprite(TextureManager::GetTexture("debug"));
@@ -49,15 +65,6 @@ int main()
         test2.setPosition(sf::Vector2f((windowWidth - 120), (windowHeight - 88)));
         sf::Sprite test3(TextureManager::GetTexture("test_3"));
         test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
-
-        /*sf::Texture texture;
-        if (!texture.loadFromFile("images/debug.png"))
-        {
-            cout << "Error";
-        }
-        sf::Sprite sprite;
-        sprite.setTexture("images/debug.png");
-        sprite.setPosition(400.0f, 600.0f);*/
 
         while (window.isOpen())
         {
@@ -94,15 +101,12 @@ int main()
                     }
                 }
             }
-            /*sf::Texture texture = TextureManager::GetTexture("debug");
-            sf::Sprite debugSprite(texture);
-            debugSprite.setPosition((windowWidth / 2) - 60, windowHeight);*/
             
             //1. Erase everything previously drawn
             window.clear(sf::Color::White);
 
             //2. Draw stuff you want to appear on the screen
-
+            //   Tiles
             for (unsigned int i = 0; i < blocksWidth; i++) {
                 for (unsigned int j = 0; j < blocksHeight; j++) {
                     if (!board.gameBoardVector.at(i).at(j).isClicked)
@@ -111,12 +115,21 @@ int main()
                         window.draw(board.gameBoardVector.at(i).at(j).clickedTile);
                 }
             }
-
+            //   Flags
             for (unsigned int i = 0; i < blocksWidth; i++) {
                 for (unsigned int j = 0; j < blocksHeight; j++) {
                     if (board.gameBoardVector.at(i).at(j).isFlag) {
                         window.draw(board.gameBoardVector.at(i).at(j).flag);
                         
+                    }
+                }
+            }
+
+            for (unsigned int i = 0; i < blocksWidth; i++) {
+                for (unsigned int j = 0; j < blocksHeight; j++) {
+                    if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
+
                     }
                 }
             }
@@ -127,34 +140,15 @@ int main()
             window.draw(test2);
             window.draw(test3);
 
-            /*sf::Sprite debugSprite(TextureManager::GetTexture("debug"));
-            debugSprite.setPosition(sf::Vector2f((windowWidth / 2) - 60, windowHeight));
-            window.draw(debugSprite);*/
-            /*window.draw(smiley);
-            window.draw(test1);
-            window.draw(test2);
-            window.draw(test3);*/
-
             //3. Display all the stuff you drew
             window.display();
         }
 
         TextureManager::Clear();
-        boardConfig.close();
+        
     }
 
-    /*bool bombPresent;
-    ifstream testboard1;
-    testboard1.open("boards/testboard1.brd");
-    if (testboard1.is_open()) {
-        while (getline (testboard1, line)) {
-            stringstream parse(line);
-            getline(parse, line);
-            for (int i = 0; i < 25; i++) {
-                board.gameBoardVector.at(i).at(j).isBomb = bool(line[i]);
-            }
-        }
-    }*/
+    
 
     return 0;
 }
