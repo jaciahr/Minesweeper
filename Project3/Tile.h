@@ -11,7 +11,7 @@ public:
     sf::Sprite clickedTile;
     
     void SetPosition(float x, float y);
-    //void SetPosition(sf::Vector2f position);
+    void SetPosition(sf::Vector2f position);
 
     Tile();
     Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBombs);

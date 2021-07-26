@@ -23,10 +23,10 @@ void Tile::SetPosition(float x, float y) {
     unclickedTile.setPosition(x, y);
 }
 
-/*void Tile::SetPosition(sf::Vector2f position) {
+void Tile::SetPosition(sf::Vector2f position) {
     clickedTile.setPosition(position);
     unclickedTile.setPosition(position);
-}*/
+}
 
 sf::FloatRect Tile::GetSpriteRect() {
     if (isClicked)
