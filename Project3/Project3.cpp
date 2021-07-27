@@ -72,6 +72,7 @@ void TestBoard(Board& board, string file) {
         for (int i = 0; i < 16; i++) {
             testboardData >> line;
             for (int j = 0; j < 25; j++) {
+                board.gameBoardVector.at(j).at(i).isBomb = false;
                 testboardArray[i][j] = line.at(j);
                 if (testboardArray[i][j] == '1') {
                     board.gameBoardVector.at(j).at(i).isBomb = true;
@@ -105,134 +106,132 @@ int main()
     }
     
     // Pick a board! Random, or one of the test boards?
+
     MineTime(board, mineCount, blocksWidth, blocksHeight);
     //TestBoard(board, "testboard3");
 
-    //  Beautiful functioning testboard stuff
+    sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
+    smiley.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
+    sf::Sprite debugSprite(TextureManager::GetTexture("debug"));
+    debugSprite.setPosition(sf::Vector2f((windowWidth - 240), (windowHeight - 88)));
+    sf::Sprite test1(TextureManager::GetTexture("test_1"));
+    test1.setPosition(sf::Vector2f((windowWidth - 180), (windowHeight - 88)));
+    sf::Sprite test2(TextureManager::GetTexture("test_2"));
+    test2.setPosition(sf::Vector2f((windowWidth - 120), (windowHeight - 88)));
+    sf::Sprite test3(TextureManager::GetTexture("test_3"));
+    test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
 
-        /*char testboardArray[16][25];
-        ifstream testboard1Data;
-        testboard1Data.open("boards/testboard3.brd");
-        if (testboard1Data.is_open()) {
-            for (int i = 0; i < 16; i++) {
-                testboard1Data >> line;
-                for (int j = 0; j < 25; j++) {
-                    testboardArray[i][j] = line.at(j);
-                    if (testboardArray[i][j] == '1') {
-                        board.gameBoardVector.at(j).at(i).isBomb = true;
-                    }
-                    cout << testboardArray[i][j];
-                }
-                cout << endl;
-            }
-            testboard1Data.close();
-        }*/
+    bool debugClicked = false;
 
-        sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
-        smiley.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
-        sf::Sprite debugSprite(TextureManager::GetTexture("debug"));
-        debugSprite.setPosition(sf::Vector2f((windowWidth - 240), (windowHeight - 88)));
-        sf::Sprite test1(TextureManager::GetTexture("test_1"));
-        test1.setPosition(sf::Vector2f((windowWidth - 180), (windowHeight - 88)));
-        sf::Sprite test2(TextureManager::GetTexture("test_2"));
-        test2.setPosition(sf::Vector2f((windowWidth - 120), (windowHeight - 88)));
-        sf::Sprite test3(TextureManager::GetTexture("test_3"));
-        test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
-
-        bool debugClicked = false;
-
-        while (window.isOpen())
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
         {
-            sf::Event event;
-            while (window.pollEvent(event))
-            {
-                if (event.type == sf::Event::Closed)
-                    window.close();
-                else if (event.type == sf::Event::MouseButtonPressed) {
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        sf::Vector2i position = sf::Mouse::getPosition(window);
+            if (event.type == sf::Event::Closed)
+                window.close();
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i position = sf::Mouse::getPosition(window);
 
-                        for (unsigned int i = 0; i < blocksWidth; i++) {
-                            for (unsigned int j = 0; j < blocksHeight; j++) {
-                                if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
-                                {
-                                    board.gameBoardVector.at(i).at(j).isClicked = true;
-                                }
-                            }
-                        }
-                        if (debugSprite.getGlobalBounds().contains(position.x, position.y)) {
-                            debugClicked = !debugClicked;
-                        }
-                    }
-                    else if (event.mouseButton.button == sf::Mouse::Right) {
-                        sf::Vector2i position = sf::Mouse::getPosition(window);
-
-                        for (unsigned int i = 0; i < blocksWidth; i++) {
-                            for (unsigned int j = 0; j < blocksHeight; j++) {
-                                if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
-                                {
-                                    if (!board.gameBoardVector.at(i).at(j).isClicked)
-                                        board.gameBoardVector.at(i).at(j).isFlag = !board.gameBoardVector.at(i).at(j).isFlag;
-                                }
+                    for (unsigned int i = 0; i < blocksWidth; i++) {
+                        for (unsigned int j = 0; j < blocksHeight; j++) {
+                            if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
+                            {
+                                board.gameBoardVector.at(i).at(j).isClicked = true;
                             }
                         }
                     }
+                    if (debugSprite.getGlobalBounds().contains(position.x, position.y)) {
+                        debugClicked = !debugClicked;
+                    }
+                    if (test1.getGlobalBounds().contains(position.x, position.y)) {
+                        TestBoard(board, "testboard1");
+                    }
+                    if (test2.getGlobalBounds().contains(position.x, position.y)) {
+                        TestBoard(board, "testboard2");
+                    }
+                    if (test3.getGlobalBounds().contains(position.x, position.y)) {
+                        TestBoard(board, "testboard3");
+                    }
+                    if (smiley.getGlobalBounds().contains(position.x, position.y)) {
+                        for (unsigned int i = 0; i < blocksWidth; i++) {
+                            for (unsigned int j = 0; j < blocksHeight; j++) {
+                                board.gameBoardVector.at(i).at(j).isBomb = false;
+                            }
+                        }
+                        MineTime(board, mineCount, blocksWidth, blocksHeight);
+                    }
                 }
-            }
-            
-            //1. Erase everything previously drawn
-            window.clear(sf::Color::White);
+                else if (event.mouseButton.button == sf::Mouse::Right) {
+                    sf::Vector2i position = sf::Mouse::getPosition(window);
 
-            //2. Draw stuff you want to appear on the screen
-            //   Tiles
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
-                    if (!board.gameBoardVector.at(i).at(j).isClicked)
-                        window.draw(board.gameBoardVector.at(i).at(j).unclickedTile);
-                    else
-                        window.draw(board.gameBoardVector.at(i).at(j).clickedTile);
-                }
-            }
-            //   Flags
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
-                    if (board.gameBoardVector.at(i).at(j).isFlag) {
-                        window.draw(board.gameBoardVector.at(i).at(j).flag);
-                        
+                    for (unsigned int i = 0; i < blocksWidth; i++) {
+                        for (unsigned int j = 0; j < blocksHeight; j++) {
+                            if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
+                            {
+                                if (!board.gameBoardVector.at(i).at(j).isClicked)
+                                    board.gameBoardVector.at(i).at(j).isFlag = !board.gameBoardVector.at(i).at(j).isFlag;
+                            }
+                        }
                     }
                 }
             }
+        }
+        
+        //1. Erase everything previously drawn
+        window.clear(sf::Color::White);
 
-            //   Bombs (normal)
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
-                    if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
-                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
-                    }
+        //2. Draw stuff you want to appear on the screen
+        //   Tiles
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                if (!board.gameBoardVector.at(i).at(j).isClicked)
+                    window.draw(board.gameBoardVector.at(i).at(j).unclickedTile);
+                else
+                    window.draw(board.gameBoardVector.at(i).at(j).clickedTile);
+            }
+        }
+        //   Flags
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                if (board.gameBoardVector.at(i).at(j).isFlag) {
+                    window.draw(board.gameBoardVector.at(i).at(j).flag);
+                    
                 }
             }
-
-            //   Bombs (debug mode)
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
-                    if (board.gameBoardVector.at(i).at(j).isBomb && debugClicked) {
-                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
-                    }
-                }
-            }
-
-            window.draw(debugSprite);
-            window.draw(smiley);
-            window.draw(test1);
-            window.draw(test2);
-            window.draw(test3);
-
-            //3. Display all the stuff you drew
-            window.display();
         }
 
-        TextureManager::Clear();
-        
-        return 0;
+        //   Bombs (normal)
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
+                    window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                }
+            }
+        }
+
+        //   Bombs (debug mode)
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                if (board.gameBoardVector.at(i).at(j).isBomb && debugClicked) {
+                    window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                }
+            }
+        }
+
+        window.draw(debugSprite);
+        window.draw(smiley);
+        window.draw(test1);
+        window.draw(test2);
+        window.draw(test3);
+
+        //3. Display all the stuff you drew
+        window.display();
     }
+
+    TextureManager::Clear();
+    
+    return 0;
+}
     
