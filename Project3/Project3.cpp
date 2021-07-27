@@ -53,25 +53,25 @@ int main()
         unsigned int windowWidth = blocksWidth * 32;
         unsigned int windowHeight = (blocksHeight * 32) + 88;
 
-        sf::RenderWindow window(sf::VideoMode(windowHeight, windowWidth), "Minesweeper");
+        sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
         
-        Board board = Board(blocksHeight, blocksWidth);
-        for (unsigned int i = 0; i < blocksHeight; i++) {
-            for (unsigned int j = 0; j < blocksWidth; j++) {
+        Board board = Board(blocksWidth, blocksHeight);
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
                 board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
             }
         }
 
         char testboardArray[16][25];
         ifstream testboard1Data;
-        testboard1Data.open("boards/testboard2.brd");
+        testboard1Data.open("boards/testboard3.brd");
         if (testboard1Data.is_open()) {
             for (int i = 0; i < 16; i++) {
                 testboard1Data >> line;
                 for (int j = 0; j < 25; j++) {
                     testboardArray[i][j] = line.at(j);
                     if (testboardArray[i][j] == '1') {
-                        board.gameBoardVector.at(i).at(j).isBomb = true;
+                        board.gameBoardVector.at(j).at(i).isBomb = true;
                     }
                     cout << testboardArray[i][j];
                 }
@@ -102,8 +102,8 @@ int main()
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         sf::Vector2i position = sf::Mouse::getPosition(window);
 
-                        for (unsigned int i = 0; i < blocksHeight; i++) {
-                            for (unsigned int j = 0; j < blocksWidth; j++) {
+                        for (unsigned int i = 0; i < blocksWidth; i++) {
+                            for (unsigned int j = 0; j < blocksHeight; j++) {
                                 if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                                 {
                                     board.gameBoardVector.at(i).at(j).isClicked = true;
@@ -114,8 +114,8 @@ int main()
                     else if (event.mouseButton.button == sf::Mouse::Right) {
                         sf::Vector2i position = sf::Mouse::getPosition(window);
 
-                        for (unsigned int i = 0; i < blocksHeight; i++) {
-                            for (unsigned int j = 0; j < blocksWidth; j++) {
+                        for (unsigned int i = 0; i < blocksWidth; i++) {
+                            for (unsigned int j = 0; j < blocksHeight; j++) {
                                 if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                                 {
                                     if (!board.gameBoardVector.at(i).at(j).isClicked)
@@ -132,8 +132,8 @@ int main()
 
             //2. Draw stuff you want to appear on the screen
             //   Tiles
-            for (unsigned int i = 0; i < blocksHeight; i++) {
-                for (unsigned int j = 0; j < blocksWidth; j++) {
+            for (unsigned int i = 0; i < blocksWidth; i++) {
+                for (unsigned int j = 0; j < blocksHeight; j++) {
                     if (!board.gameBoardVector.at(i).at(j).isClicked)
                         window.draw(board.gameBoardVector.at(i).at(j).unclickedTile);
                     else
@@ -141,8 +141,8 @@ int main()
                 }
             }
             //   Flags
-            for (unsigned int i = 0; i < blocksHeight; i++) {
-                for (unsigned int j = 0; j < blocksWidth; j++) {
+            for (unsigned int i = 0; i < blocksWidth; i++) {
+                for (unsigned int j = 0; j < blocksHeight; j++) {
                     if (board.gameBoardVector.at(i).at(j).isFlag) {
                         window.draw(board.gameBoardVector.at(i).at(j).flag);
                         
@@ -150,8 +150,8 @@ int main()
                 }
             }
 
-            for (unsigned int i = 0; i < blocksHeight; i++) {
-                for (unsigned int j = 0; j < blocksWidth; j++) {
+            for (unsigned int i = 0; i < blocksWidth; i++) {
+                for (unsigned int j = 0; j < blocksHeight; j++) {
                     if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
                         window.draw(board.gameBoardVector.at(i).at(j).bomb);
 
