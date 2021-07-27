@@ -9,13 +9,14 @@ Tile::Tile() {
     isFlag = false;
     isBomb = false;
     neighboringBombs = 0;
+    vector <Tile*> neighbors;
 }
 
 Tile::Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBombs) {
     this->isClicked = isClicked;
     this->isFlag = isFlag;
     this->isBomb = isBomb;
-    this->neighboringBombs;
+    this->neighboringBombs = neighboringBombs;
     unclickedTile.setTexture(TextureManager::GetTexture("tile_hidden"));
     clickedTile.setTexture(TextureManager::GetTexture("tile_revealed"));
     flag.setTexture(TextureManager::GetTexture("flag"));

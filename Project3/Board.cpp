@@ -29,3 +29,17 @@ Board::Board(unsigned int blocksWidth, unsigned int blocksHeight) {
         }
     }*/
 }
+
+
+void Board::CalculateNeighbors(Board board, unsigned int blocksWidth, unsigned int blocksHeight) {
+    for (unsigned int i = 0; i < blocksWidth; i++) {
+        for (unsigned int j = 0; j < blocksHeight; j++) {
+            if ((i == 0) && (j == 0)) {
+                board.gameBoardVector.at(1).at(0).neighbors.push_back(&this->tiles[i + 1][j])
+                    neighborCounter++;
+                }
+                if
+            }
+        }
+    }
+}

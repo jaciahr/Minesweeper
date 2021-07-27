@@ -14,4 +14,6 @@ public:
 	vector<vector<Tile>> gameBoardVector;
 	vector<Tile> gameBoardSubVector;
 	Board(unsigned int blocksWidth, unsigned int blocksLength);
+	int neighborCounter = 0;
+	void CalculateNeighbors(Board board, unsigned int blocksWidth, unsigned int blocksHeight);
 };

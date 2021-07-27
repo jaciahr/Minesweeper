@@ -1,5 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
+using namespace std;
+
 class Tile {
     
 public:

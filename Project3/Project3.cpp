@@ -85,6 +85,7 @@ void TestBoard(Board& board, string file) {
     }
 }
 
+
 int main()
 {
     unsigned int blocksWidth = 0;
@@ -120,6 +121,16 @@ int main()
     test2.setPosition(sf::Vector2f((windowWidth - 120), (windowHeight - 88)));
     sf::Sprite test3(TextureManager::GetTexture("test_3"));
     test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
+
+    // Numbers
+    sf::Sprite number1(TextureManager::GetTexture("number_1"));
+    sf::Sprite number2(TextureManager::GetTexture("number_2"));
+    sf::Sprite number3(TextureManager::GetTexture("number_3"));
+    sf::Sprite number4(TextureManager::GetTexture("number_4"));
+    sf::Sprite number5(TextureManager::GetTexture("number_5"));
+    sf::Sprite number6(TextureManager::GetTexture("number_6"));
+    sf::Sprite number7(TextureManager::GetTexture("number_7"));
+    sf::Sprite number8(TextureManager::GetTexture("number_8"));
 
     bool debugClicked = false;
 
@@ -219,6 +230,20 @@ int main()
                 }
             }
         }
+
+        int neighborCounter = 0;
+
+        // Numbers...?
+        /*for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                if ((i == 0) && (j = 0)) {
+                    if (board.gameBoardVector.at(1).at(0).isBomb) {
+                        neighborCounter++;
+                    }
+                    if 
+                }
+            }
+        }*/
 
         window.draw(debugSprite);
         window.draw(smiley);
