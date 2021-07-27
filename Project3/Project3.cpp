@@ -32,15 +32,25 @@ using namespace std;
 //    return mineDataVector;
 //}
 
-int main()
-{
-    //vector<vector<char>> test = MineData(10, 10, 10);
+void MineTime(Board& board, unsigned int& mineCount, unsigned int& blocksWidth, unsigned int& blocksHeight) {
+    unsigned int count = 0;
+    unsigned int randomVal1;
+    unsigned int randomVal2;
+    while (count < mineCount) {
+        randomVal1 = Random::Int(0, blocksWidth - 1);
+        randomVal2 = Random::Int(0, blocksHeight - 1);
+        if (board.gameBoardVector.at(randomVal1).at(randomVal2).isBomb == false) {
+            board.gameBoardVector.at(randomVal1).at(randomVal2).isBomb = true;
+            count++;
+        }
+    }
+}
+
+void ConfigureBoard(string file, unsigned int& blocksWidth, unsigned int& blocksHeight, unsigned int& mineCount) {
     ifstream boardConfig;
-    boardConfig.open("boards/config.cfg");
+    string filename = "boards/" + file + ".cfg";
+    boardConfig.open(filename);
     string line;
-    unsigned int blocksWidth = 0;
-    unsigned int blocksHeight = 0;
-    unsigned int mineCount = 0;
 
     if (boardConfig.is_open()) {
         stringstream parse(line);
@@ -49,20 +59,58 @@ int main()
         boardConfig >> mineCount;
 
         boardConfig.close();
+    }
+}
 
-        unsigned int windowWidth = blocksWidth * 32;
-        unsigned int windowHeight = (blocksHeight * 32) + 88;
-
-        sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
-        
-        Board board = Board(blocksWidth, blocksHeight);
-        for (unsigned int i = 0; i < blocksWidth; i++) {
-            for (unsigned int j = 0; j < blocksHeight; j++) {
-                board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
+void TestBoard(Board& board, string file) {
+    char testboardArray[16][25];
+    ifstream testboardData;
+    string line;
+    string filename = "boards/" + file + ".brd";
+    testboardData.open(filename);
+    if (testboardData.is_open()) {
+        for (int i = 0; i < 16; i++) {
+            testboardData >> line;
+            for (int j = 0; j < 25; j++) {
+                testboardArray[i][j] = line.at(j);
+                if (testboardArray[i][j] == '1') {
+                    board.gameBoardVector.at(j).at(i).isBomb = true;
+                }
+                cout << testboardArray[i][j];
             }
+            cout << endl;
         }
+        testboardData.close();
+    }
+}
 
-        char testboardArray[16][25];
+int main()
+{
+    unsigned int blocksWidth = 0;
+    unsigned int blocksHeight = 0;
+    unsigned int mineCount = 0;
+
+    ConfigureBoard("config", blocksWidth, blocksHeight, mineCount);
+
+    unsigned int windowWidth = blocksWidth * 32;
+    unsigned int windowHeight = (blocksHeight * 32) + 88;
+    
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
+    
+    Board board = Board(blocksWidth, blocksHeight);
+    for (unsigned int i = 0; i < blocksWidth; i++) {
+        for (unsigned int j = 0; j < blocksHeight; j++) {
+            board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
+        }
+    }
+    
+    // Pick a board! Random, or one of the test boards?
+    MineTime(board, mineCount, blocksWidth, blocksHeight);
+    //TestBoard(board, "testboard3");
+
+    //  Beautiful functioning testboard stuff
+
+        /*char testboardArray[16][25];
         ifstream testboard1Data;
         testboard1Data.open("boards/testboard3.brd");
         if (testboard1Data.is_open()) {
@@ -78,7 +126,7 @@ int main()
                 cout << endl;
             }
             testboard1Data.close();
-        }
+        }*/
 
         sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
         smiley.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
@@ -90,6 +138,8 @@ int main()
         test2.setPosition(sf::Vector2f((windowWidth - 120), (windowHeight - 88)));
         sf::Sprite test3(TextureManager::GetTexture("test_3"));
         test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
+
+        bool debugClicked = false;
 
         while (window.isOpen())
         {
@@ -109,6 +159,9 @@ int main()
                                     board.gameBoardVector.at(i).at(j).isClicked = true;
                                 }
                             }
+                        }
+                        if (debugSprite.getGlobalBounds().contains(position.x, position.y)) {
+                            debugClicked = !debugClicked;
                         }
                     }
                     else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -150,11 +203,20 @@ int main()
                 }
             }
 
+            //   Bombs (normal)
             for (unsigned int i = 0; i < blocksWidth; i++) {
                 for (unsigned int j = 0; j < blocksHeight; j++) {
                     if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
                         window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                    }
+                }
+            }
 
+            //   Bombs (debug mode)
+            for (unsigned int i = 0; i < blocksWidth; i++) {
+                for (unsigned int j = 0; j < blocksHeight; j++) {
+                    if (board.gameBoardVector.at(i).at(j).isBomb && debugClicked) {
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
                     }
                 }
             }
@@ -171,6 +233,6 @@ int main()
 
         TextureManager::Clear();
         
+        return 0;
     }
-    return 0;
-}
+    
