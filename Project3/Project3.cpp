@@ -9,8 +9,32 @@
 #include <string>
 using namespace std;
 
+//vector<vector<char>> MineData(int boardWidth, int boardHeight, int mineCount) {
+//    vector<vector<char>> mineDataVector;
+//    int randomValue;
+//    int count = 0;
+//
+//    for (int i = 0; i < boardWidth; i++) {
+//        for (int j = 0; j < boardHeight; j++) {
+//            randomValue = Random::Int(0, 999);
+//            while (count < mineCount) {
+//                if (randomValue % 10 == 0) {
+//                    mineDataVector[i].push_back(1);
+//                    count++;
+//                }
+//                else {
+//                    mineDataVector[i].push_back(0);
+//                }
+//            }
+//            cout << mineDataVector.at(i).at(j);
+//        }
+//    }
+//    return mineDataVector;
+//}
+
 int main()
 {
+    //vector<vector<char>> test = MineData(10, 10, 10);
     ifstream boardConfig;
     boardConfig.open("boards/config.cfg");
     string line;
@@ -29,19 +53,18 @@ int main()
         unsigned int windowWidth = blocksWidth * 32;
         unsigned int windowHeight = (blocksHeight * 32) + 88;
 
-        sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
+        sf::RenderWindow window(sf::VideoMode(windowHeight, windowWidth), "Minesweeper");
         
-        Board board = Board(blocksWidth, blocksHeight);
-        for (unsigned int i = 0; i < blocksWidth; i++) {
-            for (unsigned int j = 0; j < blocksHeight; j++) {
+        Board board = Board(blocksHeight, blocksWidth);
+        for (unsigned int i = 0; i < blocksHeight; i++) {
+            for (unsigned int j = 0; j < blocksWidth; j++) {
                 board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
             }
         }
 
         char testboardArray[16][25];
-        //vector<vector<int>> testboardVector;
         ifstream testboard1Data;
-        testboard1Data.open("boards/testboard1.brd");
+        testboard1Data.open("boards/testboard2.brd");
         if (testboard1Data.is_open()) {
             for (int i = 0; i < 16; i++) {
                 testboard1Data >> line;
@@ -50,7 +73,9 @@ int main()
                     if (testboardArray[i][j] == '1') {
                         board.gameBoardVector.at(i).at(j).isBomb = true;
                     }
+                    cout << testboardArray[i][j];
                 }
+                cout << endl;
             }
             testboard1Data.close();
         }
@@ -77,8 +102,8 @@ int main()
                     if (event.mouseButton.button == sf::Mouse::Left) {
                         sf::Vector2i position = sf::Mouse::getPosition(window);
 
-                        for (unsigned int i = 0; i < blocksWidth; i++) {
-                            for (unsigned int j = 0; j < blocksHeight; j++) {
+                        for (unsigned int i = 0; i < blocksHeight; i++) {
+                            for (unsigned int j = 0; j < blocksWidth; j++) {
                                 if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                                 {
                                     board.gameBoardVector.at(i).at(j).isClicked = true;
@@ -89,8 +114,8 @@ int main()
                     else if (event.mouseButton.button == sf::Mouse::Right) {
                         sf::Vector2i position = sf::Mouse::getPosition(window);
 
-                        for (unsigned int i = 0; i < blocksWidth; i++) {
-                            for (unsigned int j = 0; j < blocksHeight; j++) {
+                        for (unsigned int i = 0; i < blocksHeight; i++) {
+                            for (unsigned int j = 0; j < blocksWidth; j++) {
                                 if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                                 {
                                     if (!board.gameBoardVector.at(i).at(j).isClicked)
@@ -107,8 +132,8 @@ int main()
 
             //2. Draw stuff you want to appear on the screen
             //   Tiles
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
+            for (unsigned int i = 0; i < blocksHeight; i++) {
+                for (unsigned int j = 0; j < blocksWidth; j++) {
                     if (!board.gameBoardVector.at(i).at(j).isClicked)
                         window.draw(board.gameBoardVector.at(i).at(j).unclickedTile);
                     else
@@ -116,8 +141,8 @@ int main()
                 }
             }
             //   Flags
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
+            for (unsigned int i = 0; i < blocksHeight; i++) {
+                for (unsigned int j = 0; j < blocksWidth; j++) {
                     if (board.gameBoardVector.at(i).at(j).isFlag) {
                         window.draw(board.gameBoardVector.at(i).at(j).flag);
                         
@@ -125,8 +150,8 @@ int main()
                 }
             }
 
-            for (unsigned int i = 0; i < blocksWidth; i++) {
-                for (unsigned int j = 0; j < blocksHeight; j++) {
+            for (unsigned int i = 0; i < blocksHeight; i++) {
+                for (unsigned int j = 0; j < blocksWidth; j++) {
                     if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
                         window.draw(board.gameBoardVector.at(i).at(j).bomb);
 
@@ -147,8 +172,5 @@ int main()
         TextureManager::Clear();
         
     }
-
-    
-
     return 0;
 }
