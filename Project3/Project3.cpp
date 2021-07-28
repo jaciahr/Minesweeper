@@ -62,6 +62,15 @@ void TestBoard(Board& board, string file, const unsigned int blocksWidth, const 
     }
 }
 
+//void GameLoss(Board& board, unsigned int blocksWidth, unsigned int blocksHeight) {
+//    for (unsigned int i = 0; i < blocksWidth; i++) {
+//        for (unsigned int j = 0; j < blocksHeight; j++) {
+//            if (board.gameBoardVector.at(i).at(j).isBomb || board.gameBoardVector.at(i).at(j).isFlag) {
+//                window.draw(board.gameBoardVector.at(i).at(j).bomb);
+//            }
+//        }
+//    }
+//}
 
 int main()
 {
@@ -144,6 +153,7 @@ int main()
                             {
                                 if (board.gameBoardVector.at(i).at(j).isBomb == true) {
                                     gameStatus = false;
+                                    //GameLoss();
                                 }
                                 else {
                                     board.RecursiveReveal(board.gameBoardVector.at(i).at(j));
@@ -151,16 +161,16 @@ int main()
                             }
                         }
                     }
-                    if (debugSprite.getGlobalBounds().contains(position.x, position.y)) {
+                    if (debugSprite.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
                         debugClicked = !debugClicked;
                     }
-                    if (test1.getGlobalBounds().contains(position.x, position.y)) {
+                    if (test1.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
                         TestBoard(board, "testboard1", blocksWidth, blocksHeight);
                     }
-                    if (test2.getGlobalBounds().contains(position.x, position.y)) {
+                    if (test2.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
                         TestBoard(board, "testboard2", blocksWidth, blocksHeight);
                     }
-                    if (test3.getGlobalBounds().contains(position.x, position.y)) {
+                    if (test3.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
                         TestBoard(board, "testboard3", blocksWidth, blocksHeight);
                     }
                     if (smiley.getGlobalBounds().contains(position.x, position.y)) {
@@ -247,6 +257,15 @@ int main()
                 }
             }
         }
+
+        // Game loss
+        /*for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                if (!gameStatus || board.gameBoardVector.at(i).at(j).isBomb || board.gameBoardVector.at(i).at(j).isFlag) {
+                    window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                }
+            }
+        }*/
 
         // Numbers...?
         /*for (unsigned int i = 0; i < blocksWidth; i++) {
