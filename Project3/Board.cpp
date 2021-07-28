@@ -115,13 +115,28 @@ void Board::CalculateNeighbors(unsigned int blocksWidth, unsigned int blocksHeig
     }
 }
 
-void Board::RecursiveReveal(Tile& tile) {
-    if (!tile.isClicked && !tile.isFlag) {
+void Board::RecursiveReveal(Tile& tile, bool gameStatus) {
+    if (!tile.isClicked && !tile.isFlag && gameStatus) {
         tile.isClicked = true;
         if (tile.neighboringBombs == 0) {
             for (unsigned int i = 0; i < tile.neighbors.size(); i++) {
-                RecursiveReveal(*(tile.neighbors.at(i)));
+                RecursiveReveal(*(tile.neighbors.at(i)), gameStatus);
             }
         }
     }
+}
+
+bool Board::GameWin(unsigned int mineCount, unsigned int blocksWidth, unsigned int blocksHeight) {
+    int clickedCount = 0;
+    for (unsigned int i = 0; i < blocksWidth; i++) {
+        for (unsigned int j = 0; j < blocksHeight; j++) {
+            if (gameBoardVector.at(i).at(j).isClicked == true) {
+                clickedCount++;
+                if (clickedCount == ((blocksWidth * blocksHeight) - mineCount)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }

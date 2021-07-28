@@ -62,15 +62,6 @@ void TestBoard(Board& board, string file, const unsigned int blocksWidth, const 
     }
 }
 
-//void GameLoss(Board& board, unsigned int blocksWidth, unsigned int blocksHeight) {
-//    for (unsigned int i = 0; i < blocksWidth; i++) {
-//        for (unsigned int j = 0; j < blocksHeight; j++) {
-//            if (board.gameBoardVector.at(i).at(j).isBomb || board.gameBoardVector.at(i).at(j).isFlag) {
-//                window.draw(board.gameBoardVector.at(i).at(j).bomb);
-//            }
-//        }
-//    }
-//}
 
 int main()
 {
@@ -106,6 +97,10 @@ int main()
 
     sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
     smiley.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
+    sf::Sprite sad(TextureManager::GetTexture("face_lose"));
+    sad.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
+    sf::Sprite winner(TextureManager::GetTexture("face_win"));
+    winner.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
     sf::Sprite debugSprite(TextureManager::GetTexture("debug"));
     debugSprite.setPosition(sf::Vector2f((windowWidth - 240), (windowHeight - 88)));
     sf::Sprite test1(TextureManager::GetTexture("test_1"));
@@ -114,6 +109,7 @@ int main()
     test2.setPosition(sf::Vector2f((windowWidth - 120), (windowHeight - 88)));
     sf::Sprite test3(TextureManager::GetTexture("test_3"));
     test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
+
 
     
 
@@ -152,26 +148,43 @@ int main()
                             if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                             {
                                 if (board.gameBoardVector.at(i).at(j).isBomb == true) {
-                                    gameStatus = false;
-                                    //GameLoss();
+                                    if (!board.gameBoardVector.at(i).at(j).isFlag) {
+                                        gameStatus = false;
+                                        debugClicked = true;
+                                    }
                                 }
                                 else {
-                                    board.RecursiveReveal(board.gameBoardVector.at(i).at(j));
+                                    board.RecursiveReveal(board.gameBoardVector.at(i).at(j), gameStatus);
                                 }
                             }
                         }
                     }
-                    if (debugSprite.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
+                    if (debugSprite.getGlobalBounds().contains(position.x, position.y)) {
+                        if (!gameStatus) {
+                            debugClicked = false;
+                        }
                         debugClicked = !debugClicked;
                     }
-                    if (test1.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
+                    if (test1.getGlobalBounds().contains(position.x, position.y)) {
                         TestBoard(board, "testboard1", blocksWidth, blocksHeight);
+                        if (!gameStatus) {
+                            gameStatus = true;
+                            debugClicked = false;
+                        }
                     }
-                    if (test2.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
+                    if (test2.getGlobalBounds().contains(position.x, position.y)) {
                         TestBoard(board, "testboard2", blocksWidth, blocksHeight);
+                        if (!gameStatus) {
+                            gameStatus = true;
+                            debugClicked = false;
+                        }
                     }
-                    if (test3.getGlobalBounds().contains(position.x, position.y) && !gameStatus) {
+                    if (test3.getGlobalBounds().contains(position.x, position.y)) {
                         TestBoard(board, "testboard3", blocksWidth, blocksHeight);
+                        if (!gameStatus) {
+                            gameStatus = true;
+                            debugClicked = false;
+                        }
                     }
                     if (smiley.getGlobalBounds().contains(position.x, position.y)) {
                         for (unsigned int i = 0; i < blocksWidth; i++) {
@@ -195,6 +208,14 @@ int main()
                         }
                         board.MineTime(mineCount, blocksWidth, blocksHeight);
                         board.CalculateNeighbors(blocksWidth, blocksHeight);
+                    }
+                    if (sad.getGlobalBounds().contains(position.x, position.y)) {
+                        gameStatus = true;
+                        debugClicked = false;
+                    }
+                    if (winner.getGlobalBounds().contains(position.x, position.y)) {
+                        gameStatus = true;
+                        debugClicked = false;
                     }
                 }
                 else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -258,15 +279,6 @@ int main()
             }
         }
 
-        // Game loss
-        /*for (unsigned int i = 0; i < blocksWidth; i++) {
-            for (unsigned int j = 0; j < blocksHeight; j++) {
-                if (!gameStatus || board.gameBoardVector.at(i).at(j).isBomb || board.gameBoardVector.at(i).at(j).isFlag) {
-                    window.draw(board.gameBoardVector.at(i).at(j).bomb);
-                }
-            }
-        }*/
-
         // Numbers...?
         /*for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
@@ -282,6 +294,12 @@ int main()
         window.draw(test2);
         window.draw(test3);
 
+        if (!gameStatus) {
+            window.draw(sad);
+        }
+        if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+            window.draw(winner);
+        }
         //3. Display all the stuff you drew
         window.display();
     }
