@@ -5,14 +5,14 @@ Tile::Tile() {
     clickedTile.setTexture(TextureManager::GetTexture("tile_revealed"));
     flag.setTexture(TextureManager::GetTexture("flag"));
     bomb.setTexture(TextureManager::GetTexture("mine"));
+    number1.setTexture(TextureManager::GetTexture("number_1"));
     isClicked = false;
     isFlag = false;
     isBomb = false;
     neighboringBombs = 0;
-    vector <Tile*> neighbors;
 }
 
-Tile::Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBombs) {
+Tile::Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBombs, vector <Tile*> neighbors) {
     this->isClicked = isClicked;
     this->isFlag = isFlag;
     this->isBomb = isBomb;
@@ -21,6 +21,7 @@ Tile::Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBom
     clickedTile.setTexture(TextureManager::GetTexture("tile_revealed"));
     flag.setTexture(TextureManager::GetTexture("flag"));
     bomb.setTexture(TextureManager::GetTexture("mine"));
+    number1.setTexture(TextureManager::GetTexture("number_1"));
 }
 
 void Tile::SetPosition(float x, float y) {
@@ -28,6 +29,7 @@ void Tile::SetPosition(float x, float y) {
     unclickedTile.setPosition(x, y);
     flag.setPosition(x, y);
     bomb.setPosition(x, y);
+    number1.setPosition(x, y);
 }
 
 void Tile::SetPosition(sf::Vector2f position) {
@@ -35,6 +37,7 @@ void Tile::SetPosition(sf::Vector2f position) {
     unclickedTile.setPosition(position);
     flag.setPosition(position);
     bomb.setPosition(position);
+    number1.setPosition(position);
 }
 
 sf::FloatRect Tile::GetSpriteRect() {

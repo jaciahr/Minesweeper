@@ -9,17 +9,19 @@ public:
     bool isClicked;
     bool isFlag;
     bool isBomb;
-    unsigned int neighboringBombs;
+    unsigned int neighboringBombs = 0;
     sf::Sprite unclickedTile;
     sf::Sprite clickedTile;
     sf::Sprite flag;
     sf::Sprite bomb;
+    sf::Sprite number1;
+    vector <Tile*> neighbors;
     
     void SetPosition(float x, float y);
     void SetPosition(sf::Vector2f position);
 
     Tile();
-    Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBombs);
+    Tile(bool isClicked, bool isFlag, bool isBomb, unsigned int neighboringBombs, vector <Tile*> neighbors);
 
     bool GetIsClicked() {
         return isClicked;

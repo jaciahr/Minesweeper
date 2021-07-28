@@ -13,7 +13,7 @@ class Board {
 public:
 	vector<vector<Tile>> gameBoardVector;
 	vector<Tile> gameBoardSubVector;
-	Board(unsigned int blocksWidth, unsigned int blocksLength);
-	int neighborCounter = 0;
-	void CalculateNeighbors(Board board, unsigned int blocksWidth, unsigned int blocksHeight);
+	Board(unsigned int mineCount, unsigned int blocksWidth, unsigned int blocksLength);
+	void CalculateNeighbors(unsigned int blocksWidth, unsigned int blocksHeight);
+	void MineTime(unsigned int& mineCount, unsigned int& blocksWidth, unsigned int& blocksHeight);
 };

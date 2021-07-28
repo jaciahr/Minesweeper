@@ -32,19 +32,7 @@ using namespace std;
 //    return mineDataVector;
 //}
 
-void MineTime(Board& board, unsigned int& mineCount, unsigned int& blocksWidth, unsigned int& blocksHeight) {
-    unsigned int count = 0;
-    unsigned int randomVal1;
-    unsigned int randomVal2;
-    while (count < mineCount) {
-        randomVal1 = Random::Int(0, blocksWidth - 1);
-        randomVal2 = Random::Int(0, blocksHeight - 1);
-        if (board.gameBoardVector.at(randomVal1).at(randomVal2).isBomb == false) {
-            board.gameBoardVector.at(randomVal1).at(randomVal2).isBomb = true;
-            count++;
-        }
-    }
-}
+
 
 void ConfigureBoard(string file, unsigned int& blocksWidth, unsigned int& blocksHeight, unsigned int& mineCount) {
     ifstream boardConfig;
@@ -88,18 +76,29 @@ void TestBoard(Board& board, string file) {
 
 int main()
 {
+    
+    
+
     unsigned int blocksWidth = 0;
     unsigned int blocksHeight = 0;
     unsigned int mineCount = 0;
 
     ConfigureBoard("config", blocksWidth, blocksHeight, mineCount);
 
+
     unsigned int windowWidth = blocksWidth * 32;
     unsigned int windowHeight = (blocksHeight * 32) + 88;
+
+    // Magic stuff (background)
+    sf::Texture backgroundText;
+    backgroundText.setRepeated(true);
+    backgroundText.loadFromFile("images/tile_revealed.png");
+    sf::IntRect backgroundRect(0, 0, windowWidth, (windowHeight - 88));
+    sf::Sprite background(backgroundText, backgroundRect);
     
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
     
-    Board board = Board(blocksWidth, blocksHeight);
+    Board board = Board(mineCount, blocksWidth, blocksHeight);
     for (unsigned int i = 0; i < blocksWidth; i++) {
         for (unsigned int j = 0; j < blocksHeight; j++) {
             board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
@@ -108,7 +107,6 @@ int main()
     
     // Pick a board! Random, or one of the test boards?
 
-    MineTime(board, mineCount, blocksWidth, blocksHeight);
     //TestBoard(board, "testboard3");
 
     sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
@@ -122,8 +120,16 @@ int main()
     sf::Sprite test3(TextureManager::GetTexture("test_3"));
     test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
 
+    
+
     // Numbers
-    sf::Sprite number1(TextureManager::GetTexture("number_1"));
+    /*for (unsigned int i = 0; i < blocksWidth; i++) {
+        for (unsigned int j = 0; j < blocksHeight; j++) {
+            if (board.gameBoardVector.at(i).at(j).neighboringBombs == 1)
+                number1.setPosition(sf::Vector2f(i, j));
+        }
+    }*/
+
     sf::Sprite number2(TextureManager::GetTexture("number_2"));
     sf::Sprite number3(TextureManager::GetTexture("number_3"));
     sf::Sprite number4(TextureManager::GetTexture("number_4"));
@@ -171,7 +177,7 @@ int main()
                                 board.gameBoardVector.at(i).at(j).isBomb = false;
                             }
                         }
-                        MineTime(board, mineCount, blocksWidth, blocksHeight);
+                        //MineTime(board, mineCount, blocksWidth, blocksHeight);
                     }
                 }
                 else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -195,6 +201,8 @@ int main()
 
         //2. Draw stuff you want to appear on the screen
         //   Tiles
+        window.draw(background);
+
         for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
                 if (!board.gameBoardVector.at(i).at(j).isClicked)
@@ -208,10 +216,10 @@ int main()
             for (unsigned int j = 0; j < blocksHeight; j++) {
                 if (board.gameBoardVector.at(i).at(j).isFlag) {
                     window.draw(board.gameBoardVector.at(i).at(j).flag);
-                    
                 }
             }
         }
+        //********* Put into one nested for loop pls!
 
         //   Bombs (normal)
         for (unsigned int i = 0; i < blocksWidth; i++) {
@@ -231,16 +239,11 @@ int main()
             }
         }
 
-        int neighborCounter = 0;
-
         // Numbers...?
         /*for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
-                if ((i == 0) && (j = 0)) {
-                    if (board.gameBoardVector.at(1).at(0).isBomb) {
-                        neighborCounter++;
-                    }
-                    if 
+                if ((board.gameBoardVector.at(i).at(j).neighboringBombs == 1) && (board.gameBoardVector.at(i).at(j).isClicked)) {
+                    window.draw(board.gameBoardVector.at(i).at(j).number1);
                 }
             }
         }*/

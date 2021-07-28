@@ -11,7 +11,7 @@ using namespace std;
 
 
 
-Board::Board(unsigned int blocksWidth, unsigned int blocksHeight) {
+Board::Board(unsigned int mineCount, unsigned int blocksWidth, unsigned int blocksHeight) {
     for (unsigned int i = 0; i < blocksWidth; i++) {
         for (unsigned int j = 0; j < blocksHeight; j++) {
             Tile newTile;
@@ -20,25 +20,96 @@ Board::Board(unsigned int blocksWidth, unsigned int blocksHeight) {
         gameBoardVector.push_back(gameBoardSubVector);
         gameBoardSubVector.clear();
     }
-    /*gameBoardVector.resize(boardWidth, boardHeight);
-    for (int i = 0; i < boardWidth; i++) {
-        vector<Tile> gameBoardVector;
-        for (int j = 0; j < boardHeight; j++) {
-            Tile tile;
-            gameBoardVector[i].push_back(tile);
-        }
-    }*/
+    MineTime(mineCount, blocksWidth, blocksHeight);
+    CalculateNeighbors(blocksWidth, blocksHeight);
 }
 
+void Board::MineTime(unsigned int& mineCount, unsigned int& blocksWidth, unsigned int& blocksHeight) {
+    unsigned int count = 0;
+    unsigned int randomVal1;
+    unsigned int randomVal2;
+    while (count < mineCount) {
+        randomVal1 = Random::Int(0, blocksWidth - 1);
+        randomVal2 = Random::Int(0, blocksHeight - 1);
+        if (gameBoardVector.at(randomVal1).at(randomVal2).isBomb == false) {
+            gameBoardVector.at(randomVal1).at(randomVal2).isBomb = true;
+            count++;
+        }
+    }
+}
 
-void Board::CalculateNeighbors(Board board, unsigned int blocksWidth, unsigned int blocksHeight) {
+void Board::CalculateNeighbors(unsigned int blocksWidth, unsigned int blocksHeight) {
     for (unsigned int i = 0; i < blocksWidth; i++) {
         for (unsigned int j = 0; j < blocksHeight; j++) {
             if ((i == 0) && (j == 0)) {
-                board.gameBoardVector.at(1).at(0).neighbors.push_back(&this->tiles[i + 1][j])
-                    neighborCounter++;
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j + 1));
+            }
+            else if ((i == 0) && (j == (blocksHeight - 1))) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j));
+            }
+            else if ((i == (blocksWidth - 1)) && (j == 0)) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j + 1));
+            }
+            else if ((i == (blocksWidth - 1)) && (j == (blocksHeight - 1))) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i -1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j - 1));
+            }
+            else if ((i == 0) && (j != 0 && j != (blocksHeight - 1))) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j + 1));
+            }
+            else if ((i != 0 && i != (blocksWidth - 1)) && (j == 0)) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j));
+            }
+            else if ((i == (blocksWidth - 1)) && (j != 0 && j != (blocksHeight - 1))) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j + 1));
+            }
+            else if ((i != 0 && i != (blocksWidth - 1)) && (j == (blocksHeight - 1))) {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j));
+            }
+            else {
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j - 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i + 1).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i).at(j + 1));
+                gameBoardVector.at(i).at(j).neighbors.push_back(&gameBoardVector.at(i - 1).at(j + 1));
+            }            
+        }
+    }
+    for (unsigned int i = 0; i < blocksWidth; i++) {
+        for (unsigned int j = 0; j < blocksHeight; j++) {
+            for (unsigned int k = 0; k < gameBoardVector.at(i).at(j).neighbors.size(); k++) {
+                if (gameBoardVector.at(i).at(j).neighbors.at(k)->isBomb) {
+                    gameBoardVector.at(i).at(j).neighboringBombs++;
                 }
-                if
+            }
+            if (gameBoardVector.at(i).at(j).neighboringBombs != 0) {
+                gameBoardVector.at(i).at(j).clickedTile.setTexture(TextureManager::GetTexture("number_" + to_string(gameBoardVector.at(i).at(j).neighboringBombs)));
             }
         }
     }
