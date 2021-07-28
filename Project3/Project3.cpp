@@ -163,6 +163,9 @@ int main()
                         if (!gameStatus) {
                             debugClicked = false;
                         }
+                        if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+                            debugClicked = false;
+                        }
                         debugClicked = !debugClicked;
                     }
                     if (test1.getGlobalBounds().contains(position.x, position.y)) {
