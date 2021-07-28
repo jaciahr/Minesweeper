@@ -9,30 +9,6 @@
 #include <string>
 using namespace std;
 
-//vector<vector<char>> MineData(int boardWidth, int boardHeight, int mineCount) {
-//    vector<vector<char>> mineDataVector;
-//    int randomValue;
-//    int count = 0;
-//
-//    for (int i = 0; i < boardWidth; i++) {
-//        for (int j = 0; j < boardHeight; j++) {
-//            randomValue = Random::Int(0, 999);
-//            while (count < mineCount) {
-//                if (randomValue % 10 == 0) {
-//                    mineDataVector[i].push_back(1);
-//                    count++;
-//                }
-//                else {
-//                    mineDataVector[i].push_back(0);
-//                }
-//            }
-//            cout << mineDataVector.at(i).at(j);
-//        }
-//    }
-//    return mineDataVector;
-//}
-
-
 
 void ConfigureBoard(string file, unsigned int& blocksWidth, unsigned int& blocksHeight, unsigned int& mineCount) {
     ifstream boardConfig;
@@ -50,25 +26,38 @@ void ConfigureBoard(string file, unsigned int& blocksWidth, unsigned int& blocks
     }
 }
 
-void TestBoard(Board& board, string file) {
-    char testboardArray[16][25];
+void TestBoard(Board& board, string file, const unsigned int blocksWidth, const unsigned int blocksHeight) {
+    char testboardInput;
     ifstream testboardData;
     string line;
     string filename = "boards/" + file + ".brd";
     testboardData.open(filename);
     if (testboardData.is_open()) {
-        for (int i = 0; i < 16; i++) {
+        board.gameBoardVector.clear();
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                Tile newTile;
+                board.gameBoardSubVector.push_back(newTile);
+            }
+            board.gameBoardVector.push_back(board.gameBoardSubVector);
+            board.gameBoardSubVector.clear();
+        }
+        for (unsigned int i = 0; i < blocksWidth; i++) {
+            for (unsigned int j = 0; j < blocksHeight; j++) {
+                board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
+            }
+        }
+        for (int i = 0; i < blocksHeight; i++) {
             testboardData >> line;
-            for (int j = 0; j < 25; j++) {
+            for (int j = 0; j < blocksWidth; j++) {
                 board.gameBoardVector.at(j).at(i).isBomb = false;
-                testboardArray[i][j] = line.at(j);
-                if (testboardArray[i][j] == '1') {
+                testboardInput = line.at(j);
+                if (testboardInput == '1') {
                     board.gameBoardVector.at(j).at(i).isBomb = true;
                 }
-                cout << testboardArray[i][j];
             }
-            cout << endl;
         }
+        board.CalculateNeighbors(blocksWidth, blocksHeight);
         testboardData.close();
     }
 }
@@ -76,9 +65,6 @@ void TestBoard(Board& board, string file) {
 
 int main()
 {
-    
-    
-
     unsigned int blocksWidth = 0;
     unsigned int blocksHeight = 0;
     unsigned int mineCount = 0;
@@ -163,13 +149,13 @@ int main()
                         debugClicked = !debugClicked;
                     }
                     if (test1.getGlobalBounds().contains(position.x, position.y)) {
-                        TestBoard(board, "testboard1");
+                        TestBoard(board, "testboard1", blocksWidth, blocksHeight);
                     }
                     if (test2.getGlobalBounds().contains(position.x, position.y)) {
-                        TestBoard(board, "testboard2");
+                        TestBoard(board, "testboard2", blocksWidth, blocksHeight);
                     }
                     if (test3.getGlobalBounds().contains(position.x, position.y)) {
-                        TestBoard(board, "testboard3");
+                        TestBoard(board, "testboard3", blocksWidth, blocksHeight);
                     }
                     if (smiley.getGlobalBounds().contains(position.x, position.y)) {
                         for (unsigned int i = 0; i < blocksWidth; i++) {
@@ -177,7 +163,22 @@ int main()
                                 board.gameBoardVector.at(i).at(j).isBomb = false;
                             }
                         }
-                        //MineTime(board, mineCount, blocksWidth, blocksHeight);
+                        board.gameBoardVector.clear();
+                        for (unsigned int i = 0; i < blocksWidth; i++) {
+                            for (unsigned int j = 0; j < blocksHeight; j++) {
+                                Tile newTile;
+                                board.gameBoardSubVector.push_back(newTile);
+                            }
+                            board.gameBoardVector.push_back(board.gameBoardSubVector);
+                            board.gameBoardSubVector.clear();
+                        }
+                        for (unsigned int i = 0; i < blocksWidth; i++) {
+                            for (unsigned int j = 0; j < blocksHeight; j++) {
+                                board.gameBoardVector.at(i).at(j).SetPosition(i * 32.0f, j * 32.0f);
+                            }
+                        }
+                        board.MineTime(mineCount, blocksWidth, blocksHeight);
+                        board.CalculateNeighbors(blocksWidth, blocksHeight);
                     }
                 }
                 else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -200,9 +201,10 @@ int main()
         window.clear(sf::Color::White);
 
         //2. Draw stuff you want to appear on the screen
-        //   Tiles
+        
         window.draw(background);
 
+        //   Tiles
         for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
                 if (!board.gameBoardVector.at(i).at(j).isClicked)
@@ -211,6 +213,7 @@ int main()
                     window.draw(board.gameBoardVector.at(i).at(j).clickedTile);
             }
         }
+
         //   Flags
         for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
