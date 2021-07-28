@@ -115,17 +115,13 @@ void Board::CalculateNeighbors(unsigned int blocksWidth, unsigned int blocksHeig
     }
 }
 
-//void Board::RecursiveReveal(unsigned int blocksWidth, unsigned int blocksHeight) {
-//    for (unsigned int i = 0; i < blocksWidth; i++) {
-//        for (unsigned int j = 0; j < blocksHeight; j++) {
-//            for (unsigned int k = 0; k < gameBoardVector.at(i).at(j).neighbors.size(); k++) {
-//                if (gameBoardVector.at(i).at(j).neighbors.at(k)->isBomb) {
-//                    gameBoardVector.at(i).at(j).neighboringBombs++;
-//                }
-//            }
-//            if (gameBoardVector.at(i).at(j).neighboringBombs != 0) {
-//                gameBoardVector.at(i).at(j).clickedTile.setTexture(TextureManager::GetTexture("number_" + to_string(gameBoardVector.at(i).at(j).neighboringBombs)));
-//            }
-//        }
-//    }
-//}
+void Board::RecursiveReveal(Tile& tile) {
+    if (!tile.isClicked && !tile.isFlag) {
+        tile.isClicked = true;
+        if (tile.neighboringBombs == 0) {
+            for (unsigned int i = 0; i < tile.neighbors.size(); i++) {
+                RecursiveReveal(*(tile.neighbors.at(i)));
+            }
+        }
+    }
+}

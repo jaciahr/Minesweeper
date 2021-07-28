@@ -125,6 +125,7 @@ int main()
     sf::Sprite number8(TextureManager::GetTexture("number_8"));
 
     bool debugClicked = false;
+    bool gameStatus = true;
 
     while (window.isOpen())
     {
@@ -141,7 +142,12 @@ int main()
                         for (unsigned int j = 0; j < blocksHeight; j++) {
                             if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                             {
-                                board.gameBoardVector.at(i).at(j).isClicked = true;
+                                if (board.gameBoardVector.at(i).at(j).isBomb == true) {
+                                    gameStatus = false;
+                                }
+                                else {
+                                    board.RecursiveReveal(board.gameBoardVector.at(i).at(j));
+                                }
                             }
                         }
                     }
