@@ -26,7 +26,8 @@ void ConfigureBoard(string file, unsigned int& blocksWidth, unsigned int& blocks
     }
 }
 
-void TestBoard(Board& board, string file, const unsigned int blocksWidth, const unsigned int blocksHeight) {
+void TestBoard(Board& board, string file, const unsigned int blocksWidth, const unsigned int blocksHeight, int& testboardBombs) {
+    testboardBombs = 0;
     char testboardInput;
     ifstream testboardData;
     string line;
@@ -54,6 +55,7 @@ void TestBoard(Board& board, string file, const unsigned int blocksWidth, const 
                 testboardInput = line.at(j);
                 if (testboardInput == '1') {
                     board.gameBoardVector.at(j).at(i).isBomb = true;
+                    testboardBombs++;
                 }
             }
         }
@@ -65,12 +67,14 @@ void TestBoard(Board& board, string file, const unsigned int blocksWidth, const 
 
 int main()
 {
+    int testboardBombs = 0;
     unsigned int blocksWidth = 0;
     unsigned int blocksHeight = 0;
     unsigned int mineCount = 0;
+    
 
     ConfigureBoard("config", blocksWidth, blocksHeight, mineCount);
-
+    int mineCountWithFlags = mineCount;
 
     unsigned int windowWidth = blocksWidth * 32;
     unsigned int windowHeight = (blocksHeight * 32) + 88;
@@ -82,6 +86,15 @@ int main()
     sf::IntRect backgroundRect(0, 0, windowWidth, (windowHeight - 88));
     sf::Sprite background(backgroundText, backgroundRect);
     
+    
+    /*sf::Sprite digits[11];
+    for (int i = 0; i < 11; i++) {
+        string digit = "number" + to_string(i);
+        
+    }*/
+
+    
+
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Minesweeper");
     
     Board board = Board(mineCount, blocksWidth, blocksHeight);
@@ -94,7 +107,7 @@ int main()
     // Pick a board! Random, or one of the test boards?
 
     //TestBoard(board, "testboard3");
-
+    sf::Sprite clickedTile2(TextureManager::GetTexture("tile_revealed"));
     sf::Sprite smiley(TextureManager::GetTexture("face_happy"));
     smiley.setPosition(sf::Vector2f((windowWidth / 2), (windowHeight - 88)));
     sf::Sprite sad(TextureManager::GetTexture("face_lose"));
@@ -110,9 +123,7 @@ int main()
     sf::Sprite test3(TextureManager::GetTexture("test_3"));
     test3.setPosition(sf::Vector2f((windowWidth - 60), (windowHeight - 88)));
 
-
     
-
     // Numbers
     /*for (unsigned int i = 0; i < blocksWidth; i++) {
         for (unsigned int j = 0; j < blocksHeight; j++) {
@@ -132,6 +143,78 @@ int main()
     bool debugClicked = false;
     bool gameStatus = true;
 
+    //**************SPAMMING NUMBER SPRITES******************
+    vector<sf::Sprite> digits;
+
+    sf::Texture number0texture;
+    number0texture.loadFromFile("images/digits.png");
+    sf::IntRect number0rect(0, 0, 21, 32);
+    sf::Sprite number0sprite(number0texture, number0rect);
+    number0sprite.setPosition(0, (blocksHeight * 32));
+    digits.push_back(number0sprite);
+
+    sf::Texture number1texture;
+    number1texture.loadFromFile("images/digits.png");
+    sf::IntRect number1rect(21, 0, 21, 32);
+    sf::Sprite number1sprite(number1texture, number1rect);
+    digits.push_back(number1sprite);
+
+    sf::Texture number2texture;
+    number2texture.loadFromFile("images/digits.png");
+    sf::IntRect number2rect(42, 0, 21, 32);
+    sf::Sprite number2sprite(number2texture, number2rect);
+    digits.push_back(number2sprite);
+
+    sf::Texture number3texture;
+    number3texture.loadFromFile("images/digits.png");
+    sf::IntRect number3rect(63, 0, 21, 32);
+    sf::Sprite number3sprite(number3texture, number3rect);
+    digits.push_back(number3sprite);
+
+    sf::Texture number4texture;
+    number4texture.loadFromFile("images/digits.png");
+    sf::IntRect number4rect(84, 0, 21, 32);
+    sf::Sprite number4sprite(number4texture, number4rect);
+    digits.push_back(number4sprite);
+
+    sf::Texture number5texture;
+    number5texture.loadFromFile("images/digits.png");
+    sf::IntRect number5rect(105, 0, 21, 32);
+    sf::Sprite number5sprite(number5texture, number5rect);
+    digits.push_back(number5sprite);
+
+    sf::Texture number6texture;
+    number6texture.loadFromFile("images/digits.png");
+    sf::IntRect number6rect(126, 0, 21, 32);
+    sf::Sprite number6sprite(number6texture, number6rect);
+    digits.push_back(number6sprite);
+
+    sf::Texture number7texture;
+    number7texture.loadFromFile("images/digits.png");
+    sf::IntRect number7rect(147, 0, 21, 32);
+    sf::Sprite number7sprite(number7texture, number7rect);
+    digits.push_back(number7sprite);
+
+    sf::Texture number8texture;
+    number8texture.loadFromFile("images/digits.png");
+    sf::IntRect number8rect(168, 0, 21, 32);
+    sf::Sprite number8sprite(number8texture, number8rect);
+    digits.push_back(number8sprite);
+
+    sf::Texture number9texture;
+    number9texture.loadFromFile("images/digits.png");
+    sf::IntRect number9rect(189, 0, 21, 32);
+    sf::Sprite number9sprite(number9texture, number9rect);
+    digits.push_back(number9sprite);
+
+    sf::Texture minustexture;
+    minustexture.loadFromFile("images/digits.png");
+    sf::IntRect minusrect(210, 0, 21, 32);
+    sf::Sprite minussprite(minustexture, minusrect);
+
+//************************************************************************
+    
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -148,12 +231,12 @@ int main()
                             if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                             {
                                 if (board.gameBoardVector.at(i).at(j).isBomb == true) {
-                                    if (!board.gameBoardVector.at(i).at(j).isFlag) {
+                                    if (!board.gameBoardVector.at(i).at(j).isFlag && !(board.GameWin(mineCount, blocksWidth, blocksHeight))) {
                                         gameStatus = false;
                                         debugClicked = true;
                                     }
                                 }
-                                else {
+                                else if (board.gameBoardVector.at(i).at(j).isBomb == false) {
                                     board.RecursiveReveal(board.gameBoardVector.at(i).at(j), gameStatus);
                                 }
                             }
@@ -169,21 +252,24 @@ int main()
                         debugClicked = !debugClicked;
                     }
                     if (test1.getGlobalBounds().contains(position.x, position.y)) {
-                        TestBoard(board, "testboard1", blocksWidth, blocksHeight);
+                        TestBoard(board, "testboard1", blocksWidth, blocksHeight, testboardBombs);
+                        mineCountWithFlags = testboardBombs;
                         if (!gameStatus) {
                             gameStatus = true;
                             debugClicked = false;
                         }
                     }
                     if (test2.getGlobalBounds().contains(position.x, position.y)) {
-                        TestBoard(board, "testboard2", blocksWidth, blocksHeight);
+                        TestBoard(board, "testboard2", blocksWidth, blocksHeight, testboardBombs);
+                        mineCountWithFlags = testboardBombs;
                         if (!gameStatus) {
                             gameStatus = true;
                             debugClicked = false;
                         }
                     }
                     if (test3.getGlobalBounds().contains(position.x, position.y)) {
-                        TestBoard(board, "testboard3", blocksWidth, blocksHeight);
+                        TestBoard(board, "testboard3", blocksWidth, blocksHeight, testboardBombs);
+                        mineCountWithFlags = testboardBombs;
                         if (!gameStatus) {
                             gameStatus = true;
                             debugClicked = false;
@@ -196,6 +282,7 @@ int main()
                             }
                         }
                         board.gameBoardVector.clear();
+                        mineCountWithFlags = mineCount;
                         for (unsigned int i = 0; i < blocksWidth; i++) {
                             for (unsigned int j = 0; j < blocksHeight; j++) {
                                 Tile newTile;
@@ -228,8 +315,22 @@ int main()
                         for (unsigned int j = 0; j < blocksHeight; j++) {
                             if (board.gameBoardVector.at(i).at(j).GetSpriteRect().contains(position.x, position.y))
                             {
-                                if (!board.gameBoardVector.at(i).at(j).isClicked)
-                                    board.gameBoardVector.at(i).at(j).isFlag = !board.gameBoardVector.at(i).at(j).isFlag;
+                                /*cout << board.GameWin(mineCount, blocksWidth, blocksHeight) << endl;
+                                cout << gameStatus << endl;
+                                cout << board.gameBoardVector.at(i).at(j).isClicked << endl;*/
+                                bool haveWon = board.GameWin(mineCount, blocksWidth, blocksHeight);
+
+                                if (gameStatus) {
+                                    if (!board.gameBoardVector.at(i).at(j).isClicked) {
+                                        board.gameBoardVector.at(i).at(j).isFlag = !board.gameBoardVector.at(i).at(j).isFlag;
+                                        if (board.gameBoardVector.at(i).at(j).isFlag) {
+                                            mineCountWithFlags--;
+                                        }
+                                        else {
+                                            mineCountWithFlags++;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -267,8 +368,18 @@ int main()
         //   Bombs (normal)
         for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
-                if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked) {
-                    window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                if (board.gameBoardVector.at(i).at(j).isBomb && board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+                    window.draw(board.gameBoardVector.at(i).at(j).flag);
+                }
+                else if (board.gameBoardVector.at(i).at(j).isBomb && board.gameBoardVector.at(i).at(j).isClicked && !board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+                    if (board.gameBoardVector.at(i).at(j).isFlag) {
+                        window.draw(board.gameBoardVector.at(i).at(j).flag);
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                    }
+                    else {
+                        window.draw(board.gameBoardVector.at(i).at(j).clickedTile);
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                    }
                 }
             }
         }
@@ -276,8 +387,18 @@ int main()
         //   Bombs (debug mode)
         for (unsigned int i = 0; i < blocksWidth; i++) {
             for (unsigned int j = 0; j < blocksHeight; j++) {
-                if (board.gameBoardVector.at(i).at(j).isBomb && debugClicked) {
-                    window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                if (board.gameBoardVector.at(i).at(j).isBomb && debugClicked && !board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+                    if (gameStatus) {
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                    }
+                    else if (board.gameBoardVector.at(i).at(j).isFlag) {
+                        window.draw(board.gameBoardVector.at(i).at(j).flag);
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                    }
+                    else {
+                        window.draw(board.gameBoardVector.at(i).at(j).clickedTile);
+                        window.draw(board.gameBoardVector.at(i).at(j).bomb);
+                    }
                 }
             }
         }
@@ -296,6 +417,39 @@ int main()
         window.draw(test1);
         window.draw(test2);
         window.draw(test3);
+        
+        int onesInt = mineCountWithFlags % 10;
+        int tensInt = (mineCountWithFlags / 10) % 10;
+        int hundredthsInt = mineCountWithFlags / 100;
+
+        if (mineCountWithFlags < 0) {
+            minussprite.setPosition(0, (blocksHeight * 32));
+            window.draw(minussprite);
+        }
+        if (onesInt < 0) {
+            onesInt *= -1;
+        }
+        if (tensInt < 0) {
+            tensInt *= -1;
+        }
+        if (onesInt < 0) {
+            hundredthsInt *= -1;
+        }
+        if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+            onesInt = 0;
+            tensInt = 0;
+            hundredthsInt = 0;
+        }
+
+        digits[onesInt].setPosition(63, (blocksHeight * 32));
+        window.draw(digits[onesInt]);
+
+        digits[tensInt].setPosition(42, (blocksHeight * 32));
+        window.draw(digits[tensInt]);
+
+        digits[hundredthsInt].setPosition(21, (blocksHeight * 32));
+        window.draw(digits[hundredthsInt]);
+        
 
         if (!gameStatus) {
             window.draw(sad);

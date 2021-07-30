@@ -108,7 +108,7 @@ void Board::CalculateNeighbors(unsigned int blocksWidth, unsigned int blocksHeig
                     gameBoardVector.at(i).at(j).neighboringBombs++;
                 }
             }
-            if (gameBoardVector.at(i).at(j).neighboringBombs != 0) {
+            if (gameBoardVector.at(i).at(j).neighboringBombs != 0 && !gameBoardVector.at(i).at(j).isBomb) {
                 gameBoardVector.at(i).at(j).clickedTile.setTexture(TextureManager::GetTexture("number_" + to_string(gameBoardVector.at(i).at(j).neighboringBombs)));
             }
         }
@@ -130,7 +130,7 @@ bool Board::GameWin(unsigned int mineCount, unsigned int blocksWidth, unsigned i
     int clickedCount = 0;
     for (unsigned int i = 0; i < blocksWidth; i++) {
         for (unsigned int j = 0; j < blocksHeight; j++) {
-            if (gameBoardVector.at(i).at(j).isClicked == true) {
+            if (gameBoardVector.at(i).at(j).isClicked && !gameBoardVector.at(i).at(j).isFlag) {
                 clickedCount++;
                 if (clickedCount == ((blocksWidth * blocksHeight) - mineCount)) {
                     return true;

@@ -9,6 +9,7 @@ class Board {
 	unsigned int columns;
 	unsigned int rows;
 	unsigned int bombCount;
+	bool win;
 	
 public:
 	vector<vector<Tile>> gameBoardVector;
