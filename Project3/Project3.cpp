@@ -71,10 +71,10 @@ int main()
     unsigned int blocksWidth = 0;
     unsigned int blocksHeight = 0;
     unsigned int mineCount = 0;
-    
 
     ConfigureBoard("config", blocksWidth, blocksHeight, mineCount);
     int mineCountWithFlags = mineCount;
+    int mineCountCopy = mineCount;
 
     unsigned int windowWidth = blocksWidth * 32;
     unsigned int windowHeight = (blocksHeight * 32) + 88;
@@ -243,17 +243,21 @@ int main()
                         }
                     }
                     if (debugSprite.getGlobalBounds().contains(position.x, position.y)) {
+
                         if (!gameStatus) {
                             debugClicked = false;
                         }
-                        if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+                        else if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
                             debugClicked = false;
                         }
-                        debugClicked = !debugClicked;
+                        else {
+                            debugClicked = !debugClicked;
+                        }
                     }
                     if (test1.getGlobalBounds().contains(position.x, position.y)) {
                         TestBoard(board, "testboard1", blocksWidth, blocksHeight, testboardBombs);
                         mineCountWithFlags = testboardBombs;
+                        mineCount = testboardBombs;
                         if (!gameStatus) {
                             gameStatus = true;
                             debugClicked = false;
@@ -262,6 +266,7 @@ int main()
                     if (test2.getGlobalBounds().contains(position.x, position.y)) {
                         TestBoard(board, "testboard2", blocksWidth, blocksHeight, testboardBombs);
                         mineCountWithFlags = testboardBombs;
+                        mineCount = testboardBombs;
                         if (!gameStatus) {
                             gameStatus = true;
                             debugClicked = false;
@@ -270,6 +275,7 @@ int main()
                     if (test3.getGlobalBounds().contains(position.x, position.y)) {
                         TestBoard(board, "testboard3", blocksWidth, blocksHeight, testboardBombs);
                         mineCountWithFlags = testboardBombs;
+                        mineCount = testboardBombs;
                         if (!gameStatus) {
                             gameStatus = true;
                             debugClicked = false;
@@ -282,7 +288,8 @@ int main()
                             }
                         }
                         board.gameBoardVector.clear();
-                        mineCountWithFlags = mineCount;
+                        mineCountWithFlags = mineCountCopy;
+                        mineCount = mineCountCopy;
                         for (unsigned int i = 0; i < blocksWidth; i++) {
                             for (unsigned int j = 0; j < blocksHeight; j++) {
                                 Tile newTile;
@@ -465,4 +472,3 @@ int main()
     
     return 0;
 }
-    
