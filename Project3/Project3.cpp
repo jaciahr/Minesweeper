@@ -247,7 +247,7 @@ int main()
                         if (!gameStatus) {
                             debugClicked = false;
                         }
-                        else if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
+                        if (board.GameWin(mineCount, blocksWidth, blocksHeight)) {
                             debugClicked = false;
                         }
                         else {
